@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://dll0rdp8u0dx3"]
+
+[ext_resource type="Texture2D" uid="uid://b5iff3cb2a70f" path="res://assets/weapons/bat.png" id="1_cd81e"]
+[ext_resource type="Script" path="res://scripts/weapons/bat.gd" id="1_ein3g"]
+[ext_resource type="PackedScene" uid="uid://jwkjpdas3t66" path="res://scenes/weapons/weapon_ui.tscn" id="3_b2ydu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s1yit"]
+size = Vector2(44, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qpi1v"]
+size = Vector2(44, 15)
+
+[node name="Bat" type="Node2D"]
+script = ExtResource("1_ein3g")
+
+[node name="HitDetection" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitDetection"]
+position = Vector2(-1, -0.5)
+shape = SubResource("RectangleShape2D_s1yit")
+
+[node name="HitDetectionPlayer" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitDetectionPlayer"]
+position = Vector2(-1, -0.5)
+shape = SubResource("RectangleShape2D_qpi1v")
+
+[node name="Bat" type="Sprite2D" parent="."]
+position = Vector2(0, -1)
+texture = ExtResource("1_cd81e")
+
+[node name="HitCooldown" type="Timer" parent="."]
+wait_time = 0.009
+
+[node name="WeaponUI" parent="." instance=ExtResource("3_b2ydu")]
+
+[connection signal="body_entered" from="HitDetection" to="." method="_on_hit_detection_body_entered"]
+[connection signal="body_entered" from="HitDetectionPlayer" to="." method="_on_hit_detection_player_body_entered"]
+[connection signal="timeout" from="HitCooldown" to="." method="_on_hit_cooldown_timeout"]

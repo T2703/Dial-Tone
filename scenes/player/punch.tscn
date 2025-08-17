@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6ux1f7v618li"]
+
+[ext_resource type="Script" path="res://scripts/player/punch.gd" id="1_v7hbs"]
+[ext_resource type="Texture2D" uid="uid://chspe5cmtbh3j" path="res://assets/player/punch/punch.png" id="2_vp25e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nuj4s"]
+
+[node name="Punch" type="Area2D"]
+script = ExtResource("1_v7hbs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_nuj4s")
+
+[node name="Punch" type="Sprite2D" parent="."]
+position = Vector2(0, 1)
+texture = ExtResource("2_vp25e")

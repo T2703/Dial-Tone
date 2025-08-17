@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://dabejdigmoypf"]
+
+[ext_resource type="Texture2D" uid="uid://dghx6ypkdhycs" path="res://icon.svg" id="1_7jc6i"]
+[ext_resource type="PackedScene" uid="uid://bnkagqk0eefy3" path="res://scenes/player/player.tscn" id="2_ju35o"]
+[ext_resource type="PackedScene" uid="uid://dcmao1uhmiwsi" path="res://scenes/weapons/smg_pickup.tscn" id="3_2lt5f"]
+[ext_resource type="PackedScene" uid="uid://dt8uqp3wwq5q" path="res://scenes/mobs/goon.tscn" id="4_6j6mh"]
+[ext_resource type="PackedScene" uid="uid://ewkup7h0701m" path="res://scenes/weapons/bat_pickup.tscn" id="5_a4f8h"]
+
+[node name="Test" type="Node2D"]
+
+[node name="Environment" type="Node2D" parent="."]
+
+[node name="Icon" type="Sprite2D" parent="Environment"]
+position = Vector2(172, 39)
+texture = ExtResource("1_7jc6i")
+
+[node name="Mobs" type="Node2D" parent="."]
+
+[node name="Goon" parent="Mobs" instance=ExtResource("4_6j6mh")]
+position = Vector2(117, 67)
+
+[node name="Player" type="Node2D" parent="."]
+
+[node name="Player" parent="Player" instance=ExtResource("2_ju35o")]
+position = Vector2(49, 108)
+
+[node name="Weapons" type="Node2D" parent="."]
+
+[node name="BatPickup" parent="Weapons" instance=ExtResource("5_a4f8h")]
+position = Vector2(-72, 117)
+
+[node name="SMGPickup" parent="Weapons" instance=ExtResource("3_2lt5f")]
+position = Vector2(-86, 179)

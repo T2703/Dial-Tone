@@ -1,0 +1,108 @@
+[gd_scene load_steps=14 format=3 uid="uid://dt8uqp3wwq5q"]
+
+[ext_resource type="Script" path="res://scripts/mobs/goon.gd" id="1_0uwcy"]
+[ext_resource type="Texture2D" uid="uid://b3wp0ur7kibps" path="res://assets/mobs/goon/idle/idle.png" id="1_scb3c"]
+[ext_resource type="Texture2D" uid="uid://ba8l1xearxbb3" path="res://assets/mobs/goon/death/death1.png" id="2_bmcoy"]
+[ext_resource type="Texture2D" uid="uid://cjl3mh3a3mj2x" path="res://assets/mobs/goon/walk/walk1.png" id="2_f2mpl"]
+[ext_resource type="Texture2D" uid="uid://bt5qckxkrqm0w" path="res://assets/mobs/goon/death/death2.png" id="3_1o3um"]
+[ext_resource type="Texture2D" uid="uid://bti8lnaf6wqk7" path="res://assets/mobs/goon/walk/walk2.png" id="3_2y3ti"]
+[ext_resource type="Texture2D" uid="uid://cmkqwnbutaily" path="res://assets/mobs/goon/knockdown/knockdown.png" id="3_entk8"]
+[ext_resource type="Texture2D" uid="uid://df1h8g74x7mxf" path="res://assets/mobs/goon/death/death3.png" id="4_2om7y"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pw261"]
+size = Vector2(16, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mwr26"]
+size = Vector2(18, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3avc1"]
+size = Vector2(20, 30)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hkda3"]
+radius = 151.845
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kwbhj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_bmcoy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_1o3um")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_2om7y")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_scb3c")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_entk8")
+}],
+"loop": true,
+"name": &"knockdown",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f2mpl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_2y3ti")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="Goon" type="CharacterBody2D"]
+collision_mask = 6
+script = ExtResource("1_0uwcy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_pw261")
+
+[node name="GoonHitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoonHitbox"]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_mwr26")
+debug_color = Color(0.996078, 0, 0.193601, 0.42)
+
+[node name="GoonKnockdown" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoonKnockdown"]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_3avc1")
+debug_color = Color(0.655823, 0.516858, 0, 0.42)
+
+[node name="Detection" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detection"]
+shape = SubResource("CircleShape2D_hkda3")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_kwbhj")
+animation = &"idle"
+
+[node name="KnockdownTimer" type="Timer" parent="."]
+
+[node name="HeldWeapon" type="Node2D" parent="."]
+
+[connection signal="area_entered" from="GoonHitbox" to="." method="_on_goon_hitbox_area_entered"]
+[connection signal="body_entered" from="GoonKnockdown" to="." method="_on_goon_knockdown_body_entered"]
+[connection signal="body_exited" from="GoonKnockdown" to="." method="_on_goon_knockdown_body_exited"]
+[connection signal="body_entered" from="Detection" to="." method="_on_detection_body_entered"]
+[connection signal="body_exited" from="Detection" to="." method="_on_detection_body_exited"]
+[connection signal="timeout" from="KnockdownTimer" to="." method="_on_knockdown_timer_timeout"]

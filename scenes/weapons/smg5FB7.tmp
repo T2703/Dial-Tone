@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dimjb4b6qhvgr"]
+
+[ext_resource type="Script" path="res://scripts/weapons/smg.gd" id="1_myhel"]
+[ext_resource type="Texture2D" uid="uid://cmkr8x230qrjt" path="res://assets/weapons/smg.png" id="1_y8qx3"]
+
+[node name="SMG" type="Node2D"]
+script = ExtResource("1_myhel")
+
+[node name="Smg" type="Sprite2D" parent="."]
+position = Vector2(14, 5)
+texture = ExtResource("1_y8qx3")
+
+[node name="FireTimer" type="Timer" parent="."]
+wait_time = 0.086
+
+[connection signal="timeout" from="FireTimer" to="." method="_on_fire_rate_timeout"]

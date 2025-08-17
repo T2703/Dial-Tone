@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://21sg3snsfx4t"]
+
+[ext_resource type="Script" path="res://scripts/weapons/mob_bullet.gd" id="1_blf3v"]
+[ext_resource type="Texture2D" uid="uid://cs6v5xqatx3md" path="res://assets/weapons/bullet.png" id="1_j0ve6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t6orn"]
+size = Vector2(4, 4)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_27phk"]
+size = Vector2(4, 4)
+
+[node name="MobBullet" type="Area2D"]
+script = ExtResource("1_blf3v")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_t6orn")
+
+[node name="BulletSprite" type="Sprite2D" parent="."]
+position = Vector2(0, 1)
+texture = ExtResource("1_j0ve6")
+
+[node name="MobBulletHit" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MobBulletHit"]
+shape = SubResource("RectangleShape2D_27phk")
+debug_color = Color(0.982521, 0.130946, 9.62615e-07, 0.42)
+
+[node name="BulletTimer" type="Timer" parent="."]

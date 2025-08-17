@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://dcmao1uhmiwsi"]
+
+[ext_resource type="Texture2D" uid="uid://cmkr8x230qrjt" path="res://assets/weapons/smg.png" id="1_l28l3"]
+[ext_resource type="Script" path="res://scripts/weapons/smg_pickup.gd" id="1_uiyl6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_41b0e"]
+size = Vector2(29, 14)
+
+[node name="SMGPickup" type="Area2D"]
+script = ExtResource("1_uiyl6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 1)
+shape = SubResource("RectangleShape2D_41b0e")
+
+[node name="Smg" type="Sprite2D" parent="."]
+position = Vector2(-1, 1)
+texture = ExtResource("1_l28l3")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://doarlxxvjo8vp"]
+
+[ext_resource type="Script" path="res://scripts/player/ui/health.gd" id="1_1qb5y"]
+
+[node name="PlayerUI" type="CanvasLayer"]
+
+[node name="Health" type="HBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_1qb5y")

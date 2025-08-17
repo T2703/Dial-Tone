@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://ewkup7h0701m"]
+
+[ext_resource type="Texture2D" uid="uid://b5iff3cb2a70f" path="res://assets/weapons/bat.png" id="1_e3h3f"]
+[ext_resource type="Script" path="res://scripts/weapons/bat_pickup.gd" id="1_xbj3h"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wqxgt"]
+size = Vector2(45, 14)
+
+[node name="BatPickup" type="Area2D"]
+script = ExtResource("1_xbj3h")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, -2)
+shape = SubResource("RectangleShape2D_wqxgt")
+
+[node name="Bat" type="Sprite2D" parent="."]
+position = Vector2(1, -1)
+texture = ExtResource("1_e3h3f")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

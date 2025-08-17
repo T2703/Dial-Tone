@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://jwkjpdas3t66"]
+
+[ext_resource type="Script" path="res://scripts/weapons/ui/ammo.gd" id="1_o6buq"]
+
+[sub_resource type="FontFile" id="FontFile_phd52"]
+cache/0/40/0/ascent = 0.0
+cache/0/40/0/descent = 0.0
+cache/0/40/0/underline_position = 0.0
+cache/0/40/0/underline_thickness = 0.0
+cache/0/40/0/scale = 1.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+
+[node name="WeaponUI" type="CanvasLayer"]
+
+[node name="Ammo" type="Label" parent="."]
+anchors_preset = -1
+anchor_top = 0.09
+anchor_bottom = 0.09
+offset_top = -28.32
+offset_right = 129.0
+offset_bottom = 28.68
+theme_override_colors/font_color = Color(4.90934e-06, 0, 0.891691, 1)
+theme_override_fonts/font = SubResource("FontFile_phd52")
+theme_override_font_sizes/font_size = 40
+script = ExtResource("1_o6buq")
