@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dnl2xp1k3aa3d"]
+[gd_scene load_steps=8 format=3 uid="uid://dnl2xp1k3aa3d"]
 
+[ext_resource type="Script" path="res://scripts/levels/exit_room.gd" id="1_plvle"]
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_yk6xp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xuw7o"]
@@ -153,7 +154,11 @@ size = Vector2(447, 223)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_npqep"]
 size = Vector2(116, 35)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n23lo"]
+size = Vector2(142, 112)
+
 [node name="ExitRoom" type="Node2D"]
+script = ExtResource("1_plvle")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_ottew")
@@ -172,3 +177,12 @@ shape = SubResource("RectangleShape2D_w7tut")
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="Bounds"]
 position = Vector2(249, 292.5)
 shape = SubResource("RectangleShape2D_npqep")
+
+[node name="Exit" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exit"]
+position = Vector2(263, 168)
+shape = SubResource("RectangleShape2D_n23lo")
+debug_color = Color(1.44392e-07, 0.637552, 0.390571, 0.42)
+
+[connection signal="body_entered" from="Exit" to="." method="_on_exit_body_entered"]

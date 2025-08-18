@@ -16,7 +16,7 @@ var lastRoom = null
 
 func _ready() -> void:
 	randomize()
-	generateLevel(5)
+	generateLevel(3)
 	
 func generateLevel(roomCount: int):
 	# Add rooms based on the room count

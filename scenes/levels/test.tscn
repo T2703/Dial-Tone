@@ -12,9 +12,9 @@
 
 [node name="Mobs" type="Node2D" parent="."]
 
-[node name="Player" type="Node2D" parent="."]
+[node name="PlayerSpawn" type="Node2D" parent="."]
 
-[node name="Player" parent="Player" instance=ExtResource("2_ju35o")]
+[node name="Player" parent="PlayerSpawn" instance=ExtResource("2_ju35o")]
 position = Vector2(250, 811)
 
 [node name="Weapons" type="Node2D" parent="."]

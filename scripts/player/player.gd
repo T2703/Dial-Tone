@@ -67,6 +67,13 @@ var lookOffset: Vector2 = Vector2.ZERO
 var shakeOffset: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	# Restore stats and weapon
+	health = GameUtils.health
+	stamina = GameUtils.stamina
+	if GameUtils.weaponType != "":
+		var weaponScene = load(GameUtils.weaponType)
+		equipWeapon(weaponScene, GameUtils.ammo)
+	
 	staminaBar.max_value = 50
 	staminaBar.value = stamina
 	get_viewport().focus_entered.connect(_on_window_focus_in)
@@ -322,3 +329,14 @@ func _on_stamina_regen_timer_timeout() -> void:
 	if not isSprinting and stamina < 100:
 		stamina += 1
 		stamina = clamp(stamina, 0, 100)
+		
+# The save state of the player so stuff can transfer over to levels.
+func saveState():
+	GameUtils.health = health
+	GameUtils.stamina = stamina
+	if equippedWeapon:
+		GameUtils.weaponType = equippedWeapon.scene_file_path
+		GameUtils.ammo = equippedWeapon.ammo
+	else:
+		GameUtils.weaponType = ""
+		GameUtils.ammo = 0
