@@ -175,4 +175,12 @@ autoplay = "idle"
 
 [node name="HeldWeapon" type="Node2D" parent="."]
 
+[node name="StaminaTimer" type="Timer" parent="."]
+wait_time = 0.05
+
+[node name="StaminaRegenTimer" type="Timer" parent="."]
+wait_time = 0.1
+
 [connection signal="area_entered" from="PlayerHitbox" to="." method="_on_player_hitbox_area_entered"]
+[connection signal="timeout" from="StaminaTimer" to="." method="_on_stamina_timer_timeout"]
+[connection signal="timeout" from="StaminaRegenTimer" to="." method="_on_stamina_regen_timer_timeout"]

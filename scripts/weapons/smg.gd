@@ -79,7 +79,7 @@ func shoot():
 		bulletInstance.damage = DAMAGE
 		
 		# Shake camera when the player isn't shifting.
-		if !Input.is_action_pressed('shift'): cameraShake()
+		if !Input.is_action_pressed('ctrl'): cameraShake()
 		
 		# Fire rate and ammo stuff.
 		canShoot = false

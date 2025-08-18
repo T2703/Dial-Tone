@@ -3,7 +3,9 @@ extends Node2D
 # List of room scenes for the level to generate.
 var roomScenes = [
 	preload("res://scenes/levels/rooms/room_one.tscn"),
-	preload("res://scenes/levels/rooms/room_two.tscn")
+	preload("res://scenes/levels/rooms/room_two.tscn"),
+	preload("res://scenes/levels/rooms/room_three.tscn"),
+	preload("res://scenes/levels/rooms/room_four.tscn")
 ]
 
 # The list of rooms that have been generated.
@@ -29,6 +31,43 @@ func generateLevel(roomCount: int):
 			add_child(room)
 			generatedRooms.append(room)
 			lastRoom = room
+		
+		# Last room is exit room.
+		elif i == roomCount - 1:
+			var placed = false
+			var tries = 0
+			
+			while not placed and tries < 10:
+				tries += 1
+				
+				# Init the exit room
+				var exitRoomScene = preload("res://scenes/levels/rooms/exit_room.tscn")
+				var exitRoom = exitRoomScene.instantiate()
+				
+				# Pick the exit/bottom door.
+				var exitDoor = pickRanDoor(lastRoom)
+				
+				# Grab the first door in the room.
+				var entryDoor = null
+				for c in exitRoom.get_children():
+					if c.name.begins_with("Door"):
+						entryDoor = c
+						break
+			
+				# Allignment
+				exitRoom.position = exitDoor.global_position - entryDoor.position
+				
+				# Checking bounds
+				if not isOverlapping(exitRoom):
+					add_child(exitRoom)
+					generatedRooms.append(exitRoom)
+					lastRoom = exitRoom
+					placed = true
+				else:
+					exitRoom.queue_free()
+			
+			if not placed:
+				print("⚠️ Couldn’t place the exit room after several tries, skipping.")
 		# Random room to be generated.
 		else:
 			# Placement and tries
@@ -58,6 +97,7 @@ func generateLevel(roomCount: int):
 					room = roomScenes[randi() % roomScenes.size()].instantiate()
 			if not placed:
 				print("⚠️ Couldn’t place room after several tries, skipping.")
+		
 
 # Pick a random door for the last room
 func pickRanDoor(room: Node) -> Node2D:
@@ -73,12 +113,17 @@ func findOppDoor(room: Node, exit_name: String) -> Node2D:
 		"DoorTop": "DoorBottom",
 		"DoorBottom": "DoorTop",
 	}
-	return room.get_node(opposite.get(exit_name, "DoorTop"))
+	var opp_name = opposite.get(exit_name, null)
+	if opp_name == null:
+		return null
+	if room.has_node(opp_name):
+		return room.get_node(opp_name)
+	return null
 
 # This check if the room is overlapping.
 func isOverlapping(newRoom: Node2D) -> bool:
 	var newBounds = newRoom.get_node("Bounds/CollisionShape2D") as CollisionShape2D
-	var newRect = Rect2(newRoom.global_position, newBounds.shape.extents * 2)
+	var newRect = Rect2(newRoom.global_position - newBounds.shape.extents, newBounds.shape.extents * 2)
 
 	for room in generatedRooms:
 		var roomBounds = room.get_node("Bounds/CollisionShape2D") as CollisionShape2D

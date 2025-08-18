@@ -3,6 +3,9 @@ extends CharacterBody2D
 # Speed of the player movement.
 const SPEED = 175
 
+# Running speed.
+const RUNNING_SPEED = 250
+
 # Accleration of the player.
 const ACCELERATION = 0.2
 
@@ -10,10 +13,16 @@ const ACCELERATION = 0.2
 const FRICTION = 1
 
 # How far the player can punch.
-const MAX_PUNCH_DISTANCE = 30
+const MAX_PUNCH_DISTANCE = 24
 
 # How far the player can look ahead.
 const LOOK_AHEAD_DISTANCE = 105
+
+# Stamina of the player
+var stamina = 50
+
+# The current speed of the player.
+var currentSpeed = SPEED
 
 # Animation of the player.
 @onready var anim = get_node("AnimationPlayer")
@@ -21,8 +30,20 @@ const LOOK_AHEAD_DISTANCE = 105
 # The equipped weapon.
 @onready var heldWeapon: Node2D = $HeldWeapon
 
+# Stamina timer so it's not decreasing the stamina too fast.
+@onready var staminaTimer: Timer = $StaminaTimer
+
+# Stamina regeneration.
+@onready var staminaRegenTimer: Timer = $StaminaRegenTimer
+
+# The stamin bar
+@onready var staminaBar = $PlayerUI/Stamina
+
 # The equipped weapon.
 var equippedWeapon: Node = null
+
+# Check if the player is sprinting.
+var isSprinting = false
 
 # The current weapon picked up.
 var currentWeaponPickupScene: PackedScene = null
@@ -46,6 +67,8 @@ var lookOffset: Vector2 = Vector2.ZERO
 var shakeOffset: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	staminaBar.max_value = 50
+	staminaBar.value = stamina
 	get_viewport().focus_entered.connect(_on_window_focus_in)
 	get_viewport().focus_exited.connect(_on_window_focus_out)
 	
@@ -177,6 +200,22 @@ func resetCameraPos(delta):
 # Combines the offsets.
 func updateCameraOffset():
 	$Camera2D.offset = lookOffset + shakeOffset
+
+# Running and running and running and running.
+func run():
+	if not isSprinting:
+		staminaTimer.start()
+		isSprinting = true
+	currentSpeed = RUNNING_SPEED
+
+# Stops the run.
+func stopRun():
+	staminaTimer.stop()
+	isSprinting = false
+	currentSpeed = SPEED
+	if not staminaRegenTimer.is_stopped():
+		staminaRegenTimer.stop()
+	staminaRegenTimer.start()
 	
 func _process(delta: float) -> void:
 	if not get_viewport().has_focus():
@@ -193,9 +232,18 @@ func _process(delta: float) -> void:
 	if equipTimer > 0: equipTimer -= delta
 		
 	# The only time where the input is needed here because delta.
-	# Look ahead and reset if not shift
-	if Input.is_action_pressed("shift"): updateCameraPos()
-	elif !Input.is_action_pressed("shift"): resetCameraPos(delta)
+	# Look ahead and reset if not ctrl
+	if Input.is_action_pressed("ctrl"): updateCameraPos()
+	elif !Input.is_action_pressed("ctrl"): resetCameraPos(delta)
+	
+	# The sprinting movement because I feel like that it is important.
+	if Input.is_action_pressed("shift") and stamina > 0: run()
+	else:
+		if isSprinting: 
+			stopRun()
+	
+	# Update the stamina bar.
+	staminaBar.value = stamina
 		
 # This does the movement
 func _physics_process(delta: float) -> void:
@@ -213,7 +261,7 @@ func _physics_process(delta: float) -> void:
 	var direction = getInput()
 	
 	if direction.length() > 0:
-		velocity = velocity.lerp(direction.normalized() * SPEED, ACCELERATION)
+		velocity = velocity.lerp(direction.normalized() * currentSpeed, ACCELERATION)
 		anim.play("walk")
 	else:
 		velocity = velocity.lerp(Vector2.ZERO, FRICTION)
@@ -251,7 +299,6 @@ func _on_window_focus_in():
 	Input.action_release("attack")
 	Input.action_release("rclick")
 	anim.play("idle")
-	print("Window has gained focus.")
 
 func _on_window_focus_out():
 	velocity = Vector2.ZERO
@@ -262,4 +309,16 @@ func _on_window_focus_out():
 	Input.action_release("attack")
 	Input.action_release("rclick")
 	anim.play("idle")
-	print("Window has lost focus.")
+
+
+func _on_stamina_timer_timeout() -> void:
+	# Run when stamina and stop when none.
+	if isSprinting and stamina > 0:
+		stamina -= 1
+		if stamina <= 0:
+			stopRun()
+
+func _on_stamina_regen_timer_timeout() -> void:
+	if not isSprinting and stamina < 100:
+		stamina += 1
+		stamina = clamp(stamina, 0, 100)

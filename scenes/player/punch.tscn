@@ -6,6 +6,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nuj4s"]
 
 [node name="Punch" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
 script = ExtResource("1_v7hbs")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

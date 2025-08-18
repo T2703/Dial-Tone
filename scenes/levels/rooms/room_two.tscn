@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://oetird42j0mc"]
+[gd_scene load_steps=7 format=3 uid="uid://oetird42j0mc"]
 
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_u08wl"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y3gtk"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t1anu"]
 texture = ExtResource("1_u08wl")
 3:0/0 = 0
 1:1/0 = 0
@@ -145,10 +145,16 @@ texture = ExtResource("1_u08wl")
 [sub_resource type="TileSet" id="TileSet_keqq3"]
 physics_layer_0/collision_layer = 2
 physics_layer_0/collision_mask = 5
-sources/0 = SubResource("TileSetAtlasSource_y3gtk")
+sources/0 = SubResource("TileSetAtlasSource_t1anu")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_psa7m"]
+size = Vector2(95, 27)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8uig4"]
+size = Vector2(96, 29)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e7fy3"]
-size = Vector2(464.5, 224)
+size = Vector2(401, 158)
 
 [node name="RoomTwo" type="Node2D"]
 
@@ -161,11 +167,19 @@ layer_0/tile_data = PackedInt32Array(0, 65536, 1, 65536, 65536, 1, 131072, 65536
 position = Vector2(224, 0)
 
 [node name="DoorBottom" type="Marker2D" parent="."]
-position = Vector2(77, 226)
+position = Vector2(77, 224)
 
 [node name="Bounds" type="Area2D" parent="."]
-position = Vector2(77, 226)
+position = Vector2(76, 215)
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(3, -10.5)
+shape = SubResource("RectangleShape2D_psa7m")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(147, -197.5)
+shape = SubResource("RectangleShape2D_8uig4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(157, -115)
+position = Vector2(155.5, -103)
 shape = SubResource("RectangleShape2D_e7fy3")

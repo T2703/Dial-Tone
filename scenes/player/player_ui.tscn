@@ -1,10 +1,30 @@
-[gd_scene load_steps=2 format=3 uid="uid://doarlxxvjo8vp"]
+[gd_scene load_steps=4 format=3 uid="uid://doarlxxvjo8vp"]
 
 [ext_resource type="Script" path="res://scripts/player/ui/health.gd" id="1_1qb5y"]
+[ext_resource type="Script" path="res://scripts/player/ui/stamina.gd" id="2_e7bm0"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_env6r"]
 
 [node name="PlayerUI" type="CanvasLayer"]
 
 [node name="Health" type="HBoxContainer" parent="."]
 offset_right = 40.0
-offset_bottom = 40.0
+offset_bottom = 7.0
 script = ExtResource("1_1qb5y")
+
+[node name="Score" type="Label" parent="."]
+offset_top = 38.0
+offset_right = 80.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0, 0, 0.917647, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0.713726, 1)
+theme_override_font_sizes/font_size = 30
+text = "Score
+"
+
+[node name="Stamina" type="TextureProgressBar" parent="."]
+offset_top = 7.0
+offset_right = 40.0
+offset_bottom = 16.0
+texture_under = SubResource("CanvasTexture_env6r")
+script = ExtResource("2_e7bm0")

@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bkt0vfbaqovql"]
+[gd_scene load_steps=7 format=3 uid="uid://bkt0vfbaqovql"]
 
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_hyqu7"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yi2nt"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o41eg"]
 texture = ExtResource("1_hyqu7")
 3:0/0 = 0
 1:1/0 = 0
@@ -145,10 +145,16 @@ texture = ExtResource("1_hyqu7")
 [sub_resource type="TileSet" id="TileSet_0ppvl"]
 physics_layer_0/collision_layer = 2
 physics_layer_0/collision_mask = 5
-sources/1 = SubResource("TileSetAtlasSource_yi2nt")
+sources/1 = SubResource("TileSetAtlasSource_o41eg")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cxrgo"]
-size = Vector2(511, 224)
+size = Vector2(447, 158)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x23tl"]
+size = Vector2(96, 28.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7uhtb"]
+size = Vector2(96, 28)
 
 [node name="RoomOne" type="Node2D"]
 
@@ -166,5 +172,13 @@ position = Vector2(432, 224)
 [node name="Bounds" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(256.5, 112)
+position = Vector2(255.5, 112)
 shape = SubResource("RectangleShape2D_cxrgo")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(80, 18.25)
+shape = SubResource("RectangleShape2D_x23tl")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(432, 206)
+shape = SubResource("RectangleShape2D_7uhtb")
