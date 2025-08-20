@@ -19,7 +19,7 @@ size = Vector2(18, 30)
 size = Vector2(20, 30)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hkda3"]
-radius = 151.845
+radius = 159.003
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kwbhj"]
 animations = [{
@@ -91,6 +91,7 @@ debug_color = Color(0.655823, 0.516858, 0, 0.42)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Detection"]
 shape = SubResource("CircleShape2D_hkda3")
+debug_color = Color(0.993295, 0, 0.239713, 0.42)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_kwbhj")
@@ -99,6 +100,8 @@ animation = &"walk"
 [node name="KnockdownTimer" type="Timer" parent="."]
 
 [node name="HeldWeapon" type="Node2D" parent="."]
+
+[node name="LineOfSight" type="RayCast2D" parent="."]
 
 [connection signal="area_entered" from="GoonHitbox" to="." method="_on_goon_hitbox_area_entered"]
 [connection signal="body_entered" from="GoonKnockdown" to="." method="_on_goon_knockdown_body_entered"]

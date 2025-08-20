@@ -10,7 +10,10 @@ size = Vector2(4, 4)
 size = Vector2(4, 4)
 
 [node name="MobBullet" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
 script = ExtResource("1_blf3v")
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_t6orn")
@@ -26,3 +29,6 @@ shape = SubResource("RectangleShape2D_27phk")
 debug_color = Color(0.982521, 0.130946, 9.62615e-07, 0.42)
 
 [node name="BulletTimer" type="Timer" parent="."]
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

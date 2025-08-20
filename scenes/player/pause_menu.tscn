@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0udm0wu7fdan"]
+
+[ext_resource type="Script" path="res://scripts/player/ui/pause_menu.gd" id="1_516mo"]
+
+[node name="PauseMenu" type="Node2D"]
+position = Vector2(637, 201)
+script = ExtResource("1_516mo")
+
+[node name="Resume" type="Button" parent="."]
+offset_left = -638.0
+offset_top = -200.0
+offset_right = -409.0
+offset_bottom = -144.0
+text = "Resume"
+
+[node name="Quit" type="Button" parent="."]
+offset_left = -891.0
+offset_top = -175.0
+offset_right = -666.0
+offset_bottom = -132.0
+text = "Quit"
+
+[node name="Darkness" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.202425, 0.179102, 0.198508, 1)
+
+[connection signal="pressed" from="Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]

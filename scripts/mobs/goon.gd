@@ -7,7 +7,10 @@ const KNOCK_DOWN_TIME = 3
 const KNOCK_DOWN_FRICTION = 95
 
 # The state of goon.
-enum GoonState { IDLE,  PATROL, CHASING_PLAYER, GETTING_WEAPON }
+enum GoonState { IDLE,  PATROL, CHASING_PLAYER, GETTING_WEAPON, SEARCHING }
+
+# The last known player position
+var lastKnownPlayerPos: Vector2 = Vector2.ZERO
 
 # Goon state.
 var state = GoonState.IDLE
@@ -15,8 +18,8 @@ var state = GoonState.IDLE
 # SPEED OF THE ENEMY
 var speed = 100
 
-# Health value for the goon, can be from 1 to 5.
-var health = randi_range(1, 5)
+# Health value for the goon, can be from 1 to 3.
+var health = randi_range(1, 3)
 
 # Check if the player is located inside of the goon.
 var playerInGoon = false
@@ -63,11 +66,23 @@ var weaponDropped = false
 # Check if goon is dead.
 var isDead = false
 
+# The home position of the goon.
+var homePos: Vector2
+
+# The timer of the lost sight.
+var lostSightTimer = 0.0
+
 # Timer of the knockdown timer.
 @onready var knockDownTimer: Timer = $KnockdownTimer
 
 # Hitbox of the goon.
 @onready var goonHitbox: Area2D = $GoonHitbox
+
+# Detection area for player
+@onready var detectionArea: Area2D = $Detection
+
+# Knockdown area
+@onready var knockdownArea: Area2D = $GoonKnockdown
 
 # The weapon.
 @export var weaponScene: PackedScene
@@ -75,8 +90,15 @@ var isDead = false
 # The ammo.
 @export var startingAmmo: int
 
+# This checks if the tile wile is matching with the player.
+var isTileWallPlayer = false
+
+# Does the goon have line of sight?
+var isLineOfSight = false
+
 func _ready():
 	get_node("AnimatedSprite2D").play("idle")
+	homePos = global_position
 	
 	if weaponScene:
 		equipWeapon(weaponScene, startingAmmo)
@@ -86,8 +108,20 @@ func _ready():
 		weaponTarget = getNearestWeapon()
 		if weaponTarget:
 			state = GoonState.GETTING_WEAPON
+
+func _process(delta: float) -> void:
+	if playerRef and is_instance_valid(playerRef):
+		$LineOfSight.target_position = playerRef.global_position - global_position
+		var collider = $LineOfSight.get_collider()
+		isLineOfSight = (collider == playerRef)
+
+	else:
+		isLineOfSight = false
 	
 func _physics_process(delta: float) -> void:
+	if isDead:
+		return
+		
 	# Make sure this gets reenabled.
 	if not isKnockdown and is_instance_valid(goonHitbox):
 		if not goonHitbox.monitoring:
@@ -106,77 +140,102 @@ func _physics_process(delta: float) -> void:
 		dropWeapon()
 		
 		# Check for the execution.
-		if playerInGoon and Input.is_action_just_pressed("space"): death()
+		if playerInGoon and Input.is_action_just_pressed("space"): 
+			death()
+			return
 	
 	# Getting weapon.
-	elif state == GoonState.GETTING_WEAPON and weaponTarget:
+	elif state == GoonState.GETTING_WEAPON and weaponTarget and is_instance_valid(weaponTarget):
 		var dir = (weaponTarget.global_position - global_position).normalized()
 		velocity = dir * speed
 		if global_position.distance_to(weaponTarget.global_position) < 12:
 			weaponTarget.pickupByMob(self)
 			state = GoonState.CHASING_PLAYER
-		
+	
 	# Chasing the player.
-	elif state == GoonState.CHASING_PLAYER and playerRef:
+	elif state == GoonState.CHASING_PLAYER and playerRef and is_instance_valid(playerRef):
 		var distToPlayer = global_position.distance_to(playerRef.global_position)
 		var dir = (playerRef.global_position - global_position).normalized()
-		velocity = dir * speed
+		print("CHASE")
 		
-		
-		# The gun logic.
-		if equippedWeapon.typeOfWeapon == "gun":
-			# Positions where they shoot.
-			var minShootDist = 40
-			var maxShootDist = 120
+		# Check if line of sight exists
+		if isLineOfSight:
+			lastKnownPlayerPos = playerRef.global_position
+			lostSightTimer = 0.0
 			
-			# Movement logic
-			if distToPlayer > maxShootDist:
-				# Too far, move closer.
-				velocity = dir * speed
-			elif distToPlayer < minShootDist:
-				# Too close, back up.
-				velocity = -dir * speed * 0.75
-			else:
-				# Stand still
-				velocity = Vector2.ZERO
+			# The gun logic.
+			if equippedWeapon and equippedWeapon.typeOfWeapon == "gun":
+				# Positions where they shoot.
+				var minShootDist = 50
+				var maxShootDist = 150
+				
+				# Movement logic
+				if distToPlayer > maxShootDist:
+					# Too far, move closer.
+					velocity = dir * speed
+				elif distToPlayer < minShootDist:
+					# Too close, back up.
+					velocity = -dir * speed * 0.75
+				else:
+					# Stand still
+					velocity = Vector2.ZERO
+				
+				# Aim.
+				if equippedWeapon and is_instance_valid(equippedWeapon):		
+					# Smooth Aim.
+					var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
+					var currentAngle = equippedWeapon.rotation
+					var rotationSpeed = 5.5 * delta
+					equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
+					
+					# Make sure the aim is close 
+					var aimThreshold = deg_to_rad(10)
+					var angleDiff = abs(wrapf(targetAngle - equippedWeapon.rotation, -PI, PI))
+					
+					# Fire when they are in range of course.
+					if distToPlayer < maxShootDist and angleDiff < aimThreshold:
+						equippedWeapon.shootGoon()
 			
-			# Aim.
-			if equippedWeapon and is_instance_valid(equippedWeapon):		
-				# Smooth Aim.
+			# The melee weapon logic.	
+			elif equippedWeapon and equippedWeapon.typeOfWeapon == "melee":
+				var swingDist = 30
+				
+				# Rotate to the player
 				var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
 				var currentAngle = equippedWeapon.rotation
 				var rotationSpeed = 3.5 * delta
 				equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
 				
-				# Make sure the aim is close 
-				var aimThreshold = deg_to_rad(10)
-				var angleDiff = abs(wrapf(targetAngle - equippedWeapon.rotation, -PI, PI))
-				
-				# Fire when they are in range of course.
-				if distToPlayer < maxShootDist and angleDiff < aimThreshold:
-					equippedWeapon.shootGoon()
-		
-		# The melee weapon logic.	
-		elif equippedWeapon.typeOfWeapon == "melee":
-			var swingDist = 30
-			
-			# Rotate to the player
-			var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
-			var currentAngle = equippedWeapon.rotation
-			var rotationSpeed = 3.5 * delta
-			equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
-			
-			# Swing when close
-			if distToPlayer < swingDist:
-				velocity = Vector2.ZERO
-				equippedWeapon.swingGoon()
+				# Swing when close
+				if distToPlayer < swingDist:
+					velocity = Vector2.ZERO
+					equippedWeapon.swingGoon()
+				else:
+					if equippedWeapon.has_node("HitDetectionPlayer"):
+						equippedWeapon.hitDetectionPlayer.monitoring = false
+			# No weapon, just chase
 			else:
-				equippedWeapon.hitDetectionPlayer.monitoring = false
-				equippedWeapon.hitDetectionPlayer.monitoring = false
+				velocity = dir * speed
+		else:
+			lostSightTimer += delta
+			if lostSightTimer > 0.5:
+				# No line of sight, go to last known position
+				print("SEARCH 1")
+				state = GoonState.SEARCHING
+				playerRef = null
+		
+	elif state == GoonState.SEARCHING and !isTileWallPlayer:
+		var dir = (lastKnownPlayerPos - global_position).normalized()
+		velocity = dir * speed
+		print("SEARCH 2")
+		
+		# Reaches the last known spot.
+		if global_position.distance_to(lastKnownPlayerPos) < 15:
+			state = GoonState.IDLE
+			velocity = Vector2.ZERO
 	
 	# Normal movement if none.
-	else:
-		state = GoonState.IDLE
+	elif state == GoonState.IDLE:
 		get_node("AnimatedSprite2D").play("idle")
 		velocity = Vector2.ZERO
 		
@@ -184,8 +243,13 @@ func _physics_process(delta: float) -> void:
 
 # Detects the bullet.
 func _on_goon_hitbox_area_entered(area: Area2D) -> void:
+	print(area.name)
+	if isDead:
+		return
+		
 	# For the punch/fist.
 	if area.name == "Punch":
+		print(area.name)
 		isKnockdown = true
 		
 		# Get the player.
@@ -220,6 +284,7 @@ func _on_goon_hitbox_area_entered(area: Area2D) -> void:
 		if health <= 0:
 			dropWeapon()
 			death()
+			return
 		
 		# Clear the bullet.
 		bulletNode.queue_free()
@@ -263,10 +328,11 @@ func getNearestWeapon() -> Area2D:
 	
 	# Loop through the weapons to find the nearest one.
 	for weapon in weapons:
-		var dist = global_position.distance_to(weapon.global_position)
-		if dist < nearestDist:
-			nearestDist = dist
-			nearest = weapon
+		if is_instance_valid(weapon):
+			var dist = global_position.distance_to(weapon.global_position)
+			if dist < nearestDist:
+				nearestDist = dist
+				nearest = weapon
 	
 	return nearest
 	
@@ -286,7 +352,7 @@ func equipWeapon(weaponScene: PackedScene, ammo: int) -> void:
 
 # The function for dropping weapons.
 func dropWeapon():
-	if not weaponDropped and is_instance_valid(equippedWeapon):
+	if not weaponDropped and equippedWeapon and is_instance_valid(equippedWeapon):
 		# Saving the weapon from death.
 		lastWeaponTypePath = equippedWeapon.weaponTypeDrop
 		lastWeaponAmmo = equippedWeapon.ammo
@@ -309,6 +375,33 @@ func spawnWeaponPickup(path: String, ammo: int):
 	droppedPickup.global_position = global_position + Vector2(0, 10)
 	get_tree().current_scene.call_deferred("add_child", droppedPickup)
 
+# Check if the goon has line of sight on YOU.
+func hasLineOfSight(target: Node2D) -> bool:
+	if not is_instance_valid(target):
+		print("Not valid")
+		return false
+		
+	var spaceState = get_world_2d().direct_space_state
+	
+	# Create the query.
+	var query = PhysicsRayQueryParameters2D.create(global_position, target.global_position)
+	query.exclude = [self]  
+	query.collision_mask = collision_mask 
+	
+	var result = spaceState.intersect_ray(query)
+	
+	# If nothing is blocking then return true.
+	if result.is_empty():
+		print("true")
+		return true
+	# Check if the target returns the same as the collider.
+	else:
+		# Debugging: draw ray & print collider
+		#DebugDraw2D.draw_line(global_position, target.global_position, Color.RED)
+		print("LOS blocked by: ", result.collider)
+		isTileWallPlayer = true
+		return result.collider == target
+	
 # Once done the knockdown boolean resets and other properties
 func _on_knockdown_timer_timeout() -> void:
 	if isDead:
@@ -342,32 +435,29 @@ func _on_detection_body_entered(body: Node2D) -> void:
 		return 
 		
 	if body.name == "Player":
-		playerRef = body
-		
-		# Get weapon when not having one.
-		if equippedWeapon == null:
-			weaponTarget = getNearestWeapon()
-			if weaponTarget:
-				state = GoonState.GETTING_WEAPON
-			else: 
-				state = GoonState.IDLE
-		else:
-			state = GoonState.CHASING_PLAYER
-		
-		# Play the walk animation.
-		if get_node("AnimatedSprite2D").animation != "death":
-			get_node("AnimatedSprite2D").play("walk")
+		#print(hasLineOfSight(body))
+		# Detect the player if there is line of sight.
+		if hasLineOfSight(body):
+			playerRef = body
+			
+			# Get weapon when not having one.
+			if equippedWeapon == null:
+				weaponTarget = getNearestWeapon()
+				if weaponTarget:
+					state = GoonState.GETTING_WEAPON
+				else: 
+					state = GoonState.IDLE
+			else:
+				state = GoonState.CHASING_PLAYER
+			
+			# Play the walk animation.
+			if get_node("AnimatedSprite2D").animation != "death":
+				get_node("AnimatedSprite2D").play("walk")
 
 func _on_detection_body_exited(body: Node2D) -> void:
 	if isDead:
 		return 
 		
 	if body.name == "Player":
-		state = GoonState.IDLE
-		playerRef = null
-		
-		# Only reset state/animation if not knocked down.
-		if not isKnockdown:
-			state = GoonState.IDLE
-			if get_node("AnimatedSprite2D").animation != "death":
-				get_node("AnimatedSprite2D").play("idle")
+		state = GoonState.SEARCHING
+		#playerRef = null

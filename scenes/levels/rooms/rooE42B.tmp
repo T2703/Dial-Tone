@@ -1,11 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://bkt0vfbaqovql"]
+[gd_scene load_steps=11 format=3 uid="uid://bkt0vfbaqovql"]
 
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_hyqu7"]
 [ext_resource type="PackedScene" uid="uid://dt8uqp3wwq5q" path="res://scenes/mobs/goon.tscn" id="2_71e20"]
 [ext_resource type="PackedScene" uid="uid://dimjb4b6qhvgr" path="res://scenes/weapons/smg.tscn" id="3_gk7p8"]
 [ext_resource type="PackedScene" uid="uid://bnkagqk0eefy3" path="res://scenes/player/player.tscn" id="4_4mr2h"]
 [ext_resource type="PackedScene" uid="uid://dcmao1uhmiwsi" path="res://scenes/weapons/smg_pickup.tscn" id="5_dk6df"]
-[ext_resource type="PackedScene" uid="uid://ewkup7h0701m" path="res://scenes/weapons/bat_pickup.tscn" id="6_cvwgs"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o41eg"]
 texture = ExtResource("1_hyqu7")
@@ -189,7 +188,7 @@ position = Vector2(432, 206)
 shape = SubResource("RectangleShape2D_7uhtb")
 
 [node name="Goon" parent="." instance=ExtResource("2_71e20")]
-position = Vector2(241, 153)
+position = Vector2(239, 151)
 weaponScene = ExtResource("3_gk7p8")
 startingAmmo = 20
 
@@ -198,6 +197,3 @@ position = Vector2(459, 386)
 
 [node name="SMGPickup" parent="." instance=ExtResource("5_dk6df")]
 position = Vector2(540, 403)
-
-[node name="BatPickup" parent="." instance=ExtResource("6_cvwgs")]
-position = Vector2(462, 444)

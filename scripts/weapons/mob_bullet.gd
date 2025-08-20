@@ -27,3 +27,14 @@ func _physics_process(delta: float) -> void:
 
 func _on_bullet_timer_timeout() -> void:
 	self.queue_free()
+
+
+func _on_body_entered(body: Node2D) -> void:
+	# Clear when hitting a wall
+	if body is TileMap:
+		queue_free()
+
+func _on_area_entered(area: Area2D) -> void:
+	# Bullet collides with bullet
+	if area.name == "BulletHit":
+		queue_free()
