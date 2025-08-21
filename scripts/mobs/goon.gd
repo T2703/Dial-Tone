@@ -6,6 +6,9 @@ const KNOCK_DOWN_TIME = 3
 # The friction of the knockdown
 const KNOCK_DOWN_FRICTION = 95
 
+# The maximum search time for the goon.
+const MAX_SEARCH_TIME = 1.5 
+
 # The state of goon.
 enum GoonState { IDLE,  PATROL, CHASING_PLAYER, GETTING_WEAPON, SEARCHING }
 
@@ -17,6 +20,9 @@ var state = GoonState.IDLE
 
 # SPEED OF THE ENEMY
 var speed = 100
+
+# The timer for the search.
+var searchTimer = 0.0
 
 # Health value for the goon, can be from 1 to 3.
 var health = randi_range(1, 3)
@@ -111,10 +117,7 @@ func _ready():
 
 func _process(delta: float) -> void:
 	if playerRef and is_instance_valid(playerRef):
-		$LineOfSight.target_position = playerRef.global_position - global_position
-		var collider = $LineOfSight.get_collider()
-		isLineOfSight = (collider == playerRef)
-
+		isLineOfSight = hasLineOfSight(playerRef)
 	else:
 		isLineOfSight = false
 	
@@ -224,7 +227,10 @@ func _physics_process(delta: float) -> void:
 				state = GoonState.SEARCHING
 				playerRef = null
 		
-	elif state == GoonState.SEARCHING and !isTileWallPlayer:
+	elif state == GoonState.SEARCHING:
+		searchTimer += delta
+		
+		# Move towards the last known position.
 		var dir = (lastKnownPlayerPos - global_position).normalized()
 		velocity = dir * speed
 		print("SEARCH 2")
@@ -233,6 +239,13 @@ func _physics_process(delta: float) -> void:
 		if global_position.distance_to(lastKnownPlayerPos) < 15:
 			state = GoonState.IDLE
 			velocity = Vector2.ZERO
+			searchTimer = 0.0
+		
+		# If timer runs out give up.
+		elif searchTimer > MAX_SEARCH_TIME:
+			state = GoonState.IDLE
+			velocity = Vector2.ZERO
+			searchTimer = 0.0
 	
 	# Normal movement if none.
 	elif state == GoonState.IDLE:
@@ -377,8 +390,8 @@ func spawnWeaponPickup(path: String, ammo: int):
 
 # Check if the goon has line of sight on YOU.
 func hasLineOfSight(target: Node2D) -> bool:
+	isTileWallPlayer = false
 	if not is_instance_valid(target):
-		print("Not valid")
 		return false
 		
 	var spaceState = get_world_2d().direct_space_state
@@ -386,19 +399,15 @@ func hasLineOfSight(target: Node2D) -> bool:
 	# Create the query.
 	var query = PhysicsRayQueryParameters2D.create(global_position, target.global_position)
 	query.exclude = [self]  
-	query.collision_mask = collision_mask 
+	query.collision_mask = 1 << 0 | 1 << 1 
 	
 	var result = spaceState.intersect_ray(query)
 	
 	# If nothing is blocking then return true.
 	if result.is_empty():
-		print("true")
 		return true
 	# Check if the target returns the same as the collider.
 	else:
-		# Debugging: draw ray & print collider
-		#DebugDraw2D.draw_line(global_position, target.global_position, Color.RED)
-		print("LOS blocked by: ", result.collider)
 		isTileWallPlayer = true
 		return result.collider == target
 	
@@ -460,4 +469,6 @@ func _on_detection_body_exited(body: Node2D) -> void:
 		
 	if body.name == "Player":
 		state = GoonState.SEARCHING
-		#playerRef = null
+		playerRef = null
+		lostSightTimer = 0.0
+		lastKnownPlayerPos = body.global_position
