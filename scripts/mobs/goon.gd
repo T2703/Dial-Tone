@@ -118,6 +118,9 @@ func _ready():
 func _process(delta: float) -> void:
 	if playerRef and is_instance_valid(playerRef):
 		isLineOfSight = hasLineOfSight(playerRef)
+		
+		if isLineOfSight and state != GoonState.CHASING_PLAYER:
+			state = GoonState.CHASING_PLAYER
 	else:
 		isLineOfSight = false
 	
@@ -256,12 +259,12 @@ func _physics_process(delta: float) -> void:
 
 # Detects the bullet.
 func _on_goon_hitbox_area_entered(area: Area2D) -> void:
-	print(area.name)
+	print("Area name", area.name)
 	if isDead:
 		return
 		
 	# For the punch/fist.
-	if area.name == "Punch":
+	if area.name == "ActualPunch":
 		print(area.name)
 		isKnockdown = true
 		
@@ -442,26 +445,27 @@ func _on_goon_knockdown_body_exited(body: Node2D) -> void:
 func _on_detection_body_entered(body: Node2D) -> void:
 	if isDead:
 		return 
-		
+	
 	if body.name == "Player":
-		#print(hasLineOfSight(body))
-		# Detect the player if there is line of sight.
-		if hasLineOfSight(body):
-			playerRef = body
-			
-			# Get weapon when not having one.
-			if equippedWeapon == null:
-				weaponTarget = getNearestWeapon()
-				if weaponTarget:
-					state = GoonState.GETTING_WEAPON
-				else: 
-					state = GoonState.IDLE
-			else:
+		playerRef = body  # Always track the player when inside detection
+		
+		# If goon has a weapon, immediately chase when LoS exists
+		if equippedWeapon:
+			if hasLineOfSight(body):
 				state = GoonState.CHASING_PLAYER
-			
-			# Play the walk animation.
-			if get_node("AnimatedSprite2D").animation != "death":
-				get_node("AnimatedSprite2D").play("walk")
+			else:
+				state = GoonState.SEARCHING  # in area but hidden
+		else:
+			# No weapon: go find one first
+			weaponTarget = getNearestWeapon()
+			if weaponTarget:
+				state = GoonState.GETTING_WEAPON
+			else:
+				state = GoonState.IDLE
+
+		# Walk animation
+		if get_node("AnimatedSprite2D").animation != "death":
+			get_node("AnimatedSprite2D").play("walk")
 
 func _on_detection_body_exited(body: Node2D) -> void:
 	if isDead:

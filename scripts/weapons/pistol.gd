@@ -10,7 +10,7 @@ const BULLET_SPEED = 420
 const BULLET_SPREAD = 6
 
 # The damage it deal.
-const DAMAGE = 1
+const DAMAGE = 2
 
 # How instense the shake is.
 const INTENSITY = 1
@@ -61,7 +61,7 @@ func getInput():
 # The shooting function of the gun.
 func shoot():
 	# Check if can shoot and check if ammo.
-	if canShoot and ammo > 0:
+	if ammo > 0:
 		# Start up the bullet scene.
 		var bulletScene = load("res://scenes/weapons/bullet.tscn")
 		var bulletInstance = bulletScene.instantiate()

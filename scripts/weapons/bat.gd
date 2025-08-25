@@ -1,7 +1,7 @@
 extends Node2D
 
 # How far the player can bat.
-const MAX_BAT_DISTANCE = 30
+const MAX_BAT_DISTANCE = 15
 
 # The durablity of the melee weapon.
 var ammo = 8
