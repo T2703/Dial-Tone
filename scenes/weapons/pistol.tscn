@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cw0qsupptkaac"]
+
+[ext_resource type="Texture2D" uid="uid://ceuy4hatyxn" path="res://assets/weapons/pistol.png" id="1_37wo5"]
+[ext_resource type="Script" path="res://scripts/weapons/pistol.gd" id="1_ckrpe"]
+[ext_resource type="PackedScene" uid="uid://jwkjpdas3t66" path="res://scenes/weapons/weapon_ui.tscn" id="2_vho6b"]
+
+[node name="Pistol" type="Node2D"]
+script = ExtResource("1_ckrpe")
+
+[node name="Pistol" type="Sprite2D" parent="."]
+position = Vector2(14.5, 9.75)
+scale = Vector2(0.81, 0.519608)
+texture = ExtResource("1_37wo5")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(33, 1)
+
+[node name="FireTimer" type="Timer" parent="."]
+wait_time = 0.086
+
+[node name="WeaponUI" parent="." instance=ExtResource("2_vho6b")]
+
+[connection signal="timeout" from="FireTimer" to="." method="_on_fire_timer_timeout"]

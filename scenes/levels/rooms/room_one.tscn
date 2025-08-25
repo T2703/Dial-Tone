@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bkt0vfbaqovql"]
+[gd_scene load_steps=13 format=3 uid="uid://bkt0vfbaqovql"]
 
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_hyqu7"]
 [ext_resource type="PackedScene" uid="uid://dt8uqp3wwq5q" path="res://scenes/mobs/goon.tscn" id="2_71e20"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bnkagqk0eefy3" path="res://scenes/player/player.tscn" id="4_4mr2h"]
 [ext_resource type="PackedScene" uid="uid://dcmao1uhmiwsi" path="res://scenes/weapons/smg_pickup.tscn" id="5_dk6df"]
 [ext_resource type="PackedScene" uid="uid://ewkup7h0701m" path="res://scenes/weapons/bat_pickup.tscn" id="6_cvwgs"]
+[ext_resource type="PackedScene" uid="uid://23e7pstmocue" path="res://scenes/weapons/pistol_pickup.tscn" id="7_kvq2i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o41eg"]
 texture = ExtResource("1_hyqu7")
@@ -201,3 +202,6 @@ position = Vector2(540, 403)
 
 [node name="BatPickup" parent="." instance=ExtResource("6_cvwgs")]
 position = Vector2(462, 444)
+
+[node name="pistolPickup" parent="." instance=ExtResource("7_kvq2i")]
+position = Vector2(408, 504)
