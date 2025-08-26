@@ -192,3 +192,9 @@ position = Vector2(257, 134)
 
 [node name="Drop2" type="Marker2D" parent="ItemDrops"]
 position = Vector2(419, 62)
+
+[node name="Drop3" type="Marker2D" parent="ItemDrops"]
+position = Vector2(79, 88)
+
+[node name="Drop4" type="Marker2D" parent="ItemDrops"]
+position = Vector2(433, 205)
