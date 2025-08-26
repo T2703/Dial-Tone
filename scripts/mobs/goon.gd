@@ -456,7 +456,7 @@ func _on_detection_body_entered(body: Node2D) -> void:
 			if hasLineOfSight(body):
 				state = GoonState.CHASING_PLAYER
 			else:
-				state = GoonState.SEARCHING  # in area but hidden
+				state = GoonState.IDLE  # in area but hidden
 		else:
 			# No weapon: go find one first
 			weaponTarget = getNearestWeapon()

@@ -1,7 +1,7 @@
 extends Node2D
 
 # The fire rate of the gun.
-const FIRE_RATE = 0.05
+const FIRE_RATE = 0.4
 
 # The speed of how fast the bullets travel.
 const BULLET_SPEED = 420
@@ -54,14 +54,14 @@ func getInput():
 	
 	# Make sure that it is the player.
 	if playerRef:
-		if Input.is_action_just_pressed('attack'): shoot()
+		if Input.is_action_pressed('attack'): shoot()
 
 	return input
 
 # The shooting function of the gun.
 func shoot():
 	# Check if can shoot and check if ammo.
-	if ammo > 0:
+	if canShoot and ammo > 0:
 		# Start up the bullet scene.
 		var bulletScene = load("res://scenes/weapons/bullet.tscn")
 		var bulletInstance = bulletScene.instantiate()
@@ -151,9 +151,5 @@ func _process(delta: float) -> void:
 	
 	if playerRef: 	look_at(get_global_mouse_position())
 
-func _on_fire_rate_timeout() -> void:
-	canShoot = true
-
-
 func _on_fire_timer_timeout() -> void:
-	pass # Replace with function body.
+	canShoot = true

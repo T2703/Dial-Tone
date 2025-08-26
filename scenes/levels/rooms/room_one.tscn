@@ -205,6 +205,3 @@ position = Vector2(462, 444)
 
 [node name="pistolPickup" parent="." instance=ExtResource("7_kvq2i")]
 position = Vector2(408, 504)
-
-[node name="Goon2" parent="." instance=ExtResource("2_71e20")]
-position = Vector2(-274, 444)
