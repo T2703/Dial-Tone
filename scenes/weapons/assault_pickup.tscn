@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6xtsyfa310wo"]
+
+[ext_resource type="Texture2D" uid="uid://dygwq4xauy0k6" path="res://assets/weapons/assault.png" id="1_h4ddu"]
+[ext_resource type="Script" path="res://scripts/weapons/assault_pickup.gd" id="1_vc35f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x1u12"]
+size = Vector2(40.5, 12.5)
+
+[node name="AssaultPickup" type="Area2D"]
+script = ExtResource("1_vc35f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(12.75, 4)
+shape = SubResource("RectangleShape2D_x1u12")
+
+[node name="Assault" type="Sprite2D" parent="."]
+position = Vector2(13, 2)
+scale = Vector2(0.744737, 0.834906)
+texture = ExtResource("1_h4ddu")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

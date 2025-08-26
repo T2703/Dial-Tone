@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://dcpte0lrxiorl"]
+
+[ext_resource type="Script" path="res://scripts/weapons/assault.gd" id="1_1j3cj"]
+[ext_resource type="PackedScene" uid="uid://jwkjpdas3t66" path="res://scenes/weapons/weapon_ui.tscn" id="1_n2or0"]
+[ext_resource type="Texture2D" uid="uid://dygwq4xauy0k6" path="res://assets/weapons/assault.png" id="2_bkd45"]
+
+[node name="Assault" type="Node2D"]
+script = ExtResource("1_1j3cj")
+
+[node name="Assault" type="Sprite2D" parent="."]
+position = Vector2(13, 2)
+scale = Vector2(0.744737, 0.834906)
+texture = ExtResource("2_bkd45")
+
+[node name="FireTimer" type="Timer" parent="."]
+wait_time = 0.086
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(32, 0)
+
+[node name="WeaponUI" parent="." instance=ExtResource("1_n2or0")]
+
+[connection signal="timeout" from="FireTimer" to="." method="_on_fire_timer_timeout"]

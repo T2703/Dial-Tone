@@ -37,7 +37,7 @@ func generateLevel(roomCount: int):
 			var placed = false
 			var tries = 0
 			
-			while not placed and tries < 10:
+			while not placed:
 				tries += 1
 				
 				# Init the exit room

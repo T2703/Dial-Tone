@@ -4,6 +4,7 @@ extends Node2D
 var itemDrops = {
 	"smg": preload("res://scenes/weapons/smg_pickup.tscn"),
 	"pistol": preload("res://scenes/weapons/pistol_pickup.tscn"),
+	"assault": preload("res://scenes/weapons/assault_pickup.tscn"),
 	"bat": preload("res://scenes/weapons/bat_pickup.tscn"),
 }
 
@@ -11,6 +12,7 @@ var itemDrops = {
 var probablities = {
 	"smg": 0.6,
 	"pistol": 0.5,
+	"assault": 0.4,
 	"bat": 0.6,
 }
 
