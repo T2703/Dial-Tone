@@ -159,7 +159,7 @@ func _physics_process(delta: float) -> void:
 			state = GoonState.CHASING_PLAYER
 	
 	# Chasing the player.
-	elif state == GoonState.CHASING_PLAYER and playerRef and is_instance_valid(playerRef):
+	elif state == GoonState.CHASING_PLAYER and playerRef and is_instance_valid(playerRef) and equippedWeapon:
 		var distToPlayer = global_position.distance_to(playerRef.global_position)
 		var dir = (playerRef.global_position - global_position).normalized()
 		print("CHASE")
@@ -170,58 +170,60 @@ func _physics_process(delta: float) -> void:
 			lostSightTimer = 0.0
 			
 			# The gun logic.
-			if equippedWeapon and equippedWeapon.typeOfWeapon == "gun":
-				# Positions where they shoot.
-				var minShootDist = 50
-				var maxShootDist = 150
+			if is_instance_valid(equippedWeapon): 
+				var w = equippedWeapon
+				if w and w.typeOfWeapon == "gun":
+					# Positions where they shoot.
+					var minShootDist = 50
+					var maxShootDist = 150
+					
+					# Movement logic
+					if distToPlayer > maxShootDist:
+						# Too far, move closer.
+						velocity = dir * speed
+					elif distToPlayer < minShootDist:
+						# Too close, back up.
+						velocity = -dir * speed * 0.75
+					else:
+						# Stand still
+						velocity = Vector2.ZERO
 				
-				# Movement logic
-				if distToPlayer > maxShootDist:
-					# Too far, move closer.
-					velocity = dir * speed
-				elif distToPlayer < minShootDist:
-					# Too close, back up.
-					velocity = -dir * speed * 0.75
-				else:
-					# Stand still
-					velocity = Vector2.ZERO
-				
-				# Aim.
-				if equippedWeapon and is_instance_valid(equippedWeapon):		
-					# Smooth Aim.
+						# Aim.
+						if equippedWeapon and is_instance_valid(equippedWeapon):
+							# Smooth Aim.
+							var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
+							var currentAngle = equippedWeapon.rotation
+							var rotationSpeed = 5.5 * delta
+							equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
+							
+							# Make sure the aim is close 
+							var aimThreshold = deg_to_rad(10)
+							var angleDiff = abs(wrapf(targetAngle - equippedWeapon.rotation, -PI, PI))
+							
+							# Fire when they are in range of course.
+							if distToPlayer < maxShootDist and angleDiff < aimThreshold:
+								equippedWeapon.shootGoon()
+			
+				# The melee weapon logic.	
+				elif w and w.typeOfWeapon == "melee":
+					var swingDist = 30
+					
+					# Rotate to the player
 					var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
 					var currentAngle = equippedWeapon.rotation
-					var rotationSpeed = 5.5 * delta
+					var rotationSpeed = 3.5 * delta
 					equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
 					
-					# Make sure the aim is close 
-					var aimThreshold = deg_to_rad(10)
-					var angleDiff = abs(wrapf(targetAngle - equippedWeapon.rotation, -PI, PI))
-					
-					# Fire when they are in range of course.
-					if distToPlayer < maxShootDist and angleDiff < aimThreshold:
-						equippedWeapon.shootGoon()
-			
-			# The melee weapon logic.	
-			elif equippedWeapon and equippedWeapon.typeOfWeapon == "melee":
-				var swingDist = 30
-				
-				# Rotate to the player
-				var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
-				var currentAngle = equippedWeapon.rotation
-				var rotationSpeed = 3.5 * delta
-				equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
-				
-				# Swing when close
-				if distToPlayer < swingDist:
-					velocity = Vector2.ZERO
-					equippedWeapon.swingGoon()
+					# Swing when close
+					if distToPlayer < swingDist:
+						velocity = Vector2.ZERO
+						equippedWeapon.swingGoon()
+					else:
+						if equippedWeapon.has_node("HitDetectionPlayer"):
+							equippedWeapon.hitDetectionPlayer.monitoring = false
+				# No weapon, just chase
 				else:
-					if equippedWeapon.has_node("HitDetectionPlayer"):
-						equippedWeapon.hitDetectionPlayer.monitoring = false
-			# No weapon, just chase
-			else:
-				velocity = dir * speed
+					velocity = dir * speed
 		else:
 			lostSightTimer += delta
 			if lostSightTimer > 0.5:
@@ -450,7 +452,7 @@ func _on_detection_body_entered(body: Node2D) -> void:
 		playerRef = body  # Always track the player when inside detection
 		
 		# If goon has a weapon, immediately chase when LoS exists
-		if equippedWeapon:
+		if equippedWeapon and is_instance_valid(equippedWeapon):
 			if hasLineOfSight(body):
 				state = GoonState.CHASING_PLAYER
 			else:
