@@ -42,6 +42,7 @@ func _ready():
 	randomize()
 	
 	var spawns = get_node("ItemDrops").get_children()
+	var lastItemName = ""
 	
 	
 	# Go through each marker 2d
@@ -51,8 +52,9 @@ func _ready():
 		# 1 means yes, 0 means no
 		var my_random_number = rngSpawn.randi_range(0, 1)
 		
-		if itemName != "" and my_random_number == 1:
+		if itemName != "" and my_random_number == 1 and itemName != lastItemName:
 			var item = itemDrops[itemName].instantiate()
 			add_child(item)
 			item.global_position = spawn.global_position
+			lastItemName = itemName
 	
