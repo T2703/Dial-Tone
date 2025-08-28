@@ -54,6 +54,9 @@ var weaponTarget: Node2D = null
 # The equipped weapon.
 @onready var heldWeapon: Node2D = $HeldWeapon
 
+# To keep track of the player
+@onready var realPlayer: Node2D = get_tree().get_first_node_in_group("Player")
+
 # Cool down for the equip so it doesn't drop instantly.
 var equipCooldown = 0.2
 
@@ -162,7 +165,7 @@ func _physics_process(delta: float) -> void:
 	elif state == GoonState.CHASING_PLAYER and playerRef and is_instance_valid(playerRef) and equippedWeapon:
 		var distToPlayer = global_position.distance_to(playerRef.global_position)
 		var dir = (playerRef.global_position - global_position).normalized()
-		print("CHASE")
+		#print("CHASE")
 		
 		# Check if line of sight exists
 		if isLineOfSight:
@@ -193,7 +196,7 @@ func _physics_process(delta: float) -> void:
 							# Smooth Aim.
 							var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
 							var currentAngle = equippedWeapon.rotation
-							var rotationSpeed = 5.5 * delta
+							var rotationSpeed = 7.5 * delta
 							equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
 							
 							# Make sure the aim is close 
@@ -228,7 +231,7 @@ func _physics_process(delta: float) -> void:
 			lostSightTimer += delta
 			if lostSightTimer > 0.5:
 				# No line of sight, go to last known position
-				print("SEARCH 1")
+				#print("SEARCH 1")
 				state = GoonState.SEARCHING
 				playerRef = null
 		
@@ -238,7 +241,14 @@ func _physics_process(delta: float) -> void:
 		# Move towards the last known position.
 		var dir = (lastKnownPlayerPos - global_position).normalized()
 		velocity = dir * speed
-		print("SEARCH 2")
+		print("SEARCH 2", get_tree())
+		
+		if realPlayer and is_instance_valid(realPlayer):
+			if hasLineOfSight(realPlayer):
+				playerRef = realPlayer
+				state = GoonState.CHASING_PLAYER
+				searchTimer = 0.0
+				print("Player rediscovered during search!")
 		
 		# Reaches the last known spot.
 		if global_position.distance_to(lastKnownPlayerPos) < 15:
@@ -261,7 +271,6 @@ func _physics_process(delta: float) -> void:
 
 # Detects the bullet.
 func _on_goon_hitbox_area_entered(area: Area2D) -> void:
-	print("Area name", area.name)
 	if isDead:
 		return
 		
@@ -410,10 +419,12 @@ func hasLineOfSight(target: Node2D) -> bool:
 	
 	# If nothing is blocking then return true.
 	if result.is_empty():
+		print("no block")
 		return true
 	# Check if the target returns the same as the collider.
 	else:
 		isTileWallPlayer = true
+		print(result.collider == target)
 		return result.collider == target
 	
 # Once done the knockdown boolean resets and other properties
