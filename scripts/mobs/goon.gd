@@ -238,6 +238,7 @@ func _physics_process(delta: float) -> void:
 	elif state == GoonState.SEARCHING:
 		searchTimer += delta
 		
+		
 		# Move towards the last known position.
 		var dir = (lastKnownPlayerPos - global_position).normalized()
 		velocity = dir * speed
