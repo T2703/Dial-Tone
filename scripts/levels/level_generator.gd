@@ -16,7 +16,7 @@ var lastRoom = null
 
 func _ready() -> void:
 	randomize()
-	generateLevel(3)
+	generateLevel(10)
 	
 func generateLevel(roomCount: int):
 	# Add rooms based on the room count
@@ -25,12 +25,18 @@ func generateLevel(roomCount: int):
 		var roomScene = roomScenes[randi() % roomScenes.size()]
 		var room = roomScene.instantiate()
 		
-		# First room, origin room.
+		
+		# First room, origin/spawn room.
 		if lastRoom == null:
-			room.position = Vector2.ZERO
-			add_child(room)
-			generatedRooms.append(room)
-			lastRoom = room
+			# Init the exit room
+			var spawnRoomScene = preload("res://scenes/levels/rooms/spawn_room.tscn")
+			var spawnRoom = spawnRoomScene.instantiate()
+			
+			# Spawn it.
+			spawnRoom.position = Vector2.ZERO
+			add_child(spawnRoom)
+			generatedRooms.append(spawnRoom)
+			lastRoom = spawnRoom
 		
 		# Last room is exit room.
 		elif i == roomCount - 1:

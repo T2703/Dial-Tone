@@ -137,9 +137,12 @@ func _physics_process(delta: float) -> void:
 			goonHitbox.monitoring = true
 		
 	# If goon has no weapon and no current weapon target, find one.
-	if equippedWeapon == null and weaponTarget == null:
-		weaponTarget = getNearestWeapon()
+	if equippedWeapon == null:
+		if weaponTarget == null or not is_instance_valid(weaponTarget):
+			print("GET NEAR WEAPON")
+			weaponTarget = getNearestWeapon()
 		if weaponTarget:
+			print("GET WEAPON")
 			state = GoonState.GETTING_WEAPON
 	
 	# Apply the friction if knocked down so the body stops.
@@ -155,6 +158,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Getting weapon.
 	elif state == GoonState.GETTING_WEAPON and weaponTarget and is_instance_valid(weaponTarget):
+		print("get weapon getting")
 		var dir = (weaponTarget.global_position - global_position).normalized()
 		velocity = dir * speed
 		if global_position.distance_to(weaponTarget.global_position) < 12:
@@ -165,7 +169,7 @@ func _physics_process(delta: float) -> void:
 	elif state == GoonState.CHASING_PLAYER and playerRef and is_instance_valid(playerRef) and equippedWeapon:
 		var distToPlayer = global_position.distance_to(playerRef.global_position)
 		var dir = (playerRef.global_position - global_position).normalized()
-		#print("CHASE")
+		print("CHASE")
 		
 		# Check if line of sight exists
 		if isLineOfSight:
@@ -196,7 +200,7 @@ func _physics_process(delta: float) -> void:
 							# Smooth Aim.
 							var targetAngle = (playerRef.global_position - equippedWeapon.global_position).angle()
 							var currentAngle = equippedWeapon.rotation
-							var rotationSpeed = 7.5 * delta
+							var rotationSpeed = 6.2 * delta
 							equippedWeapon.rotation = lerp_angle(currentAngle, targetAngle, rotationSpeed)
 							
 							# Make sure the aim is close 
@@ -242,7 +246,7 @@ func _physics_process(delta: float) -> void:
 		# Move towards the last known position.
 		var dir = (lastKnownPlayerPos - global_position).normalized()
 		velocity = dir * speed
-		print("SEARCH 2", get_tree())
+		#print("real", realPlayer)
 		
 		if realPlayer and is_instance_valid(realPlayer):
 			if hasLineOfSight(realPlayer):
@@ -253,12 +257,14 @@ func _physics_process(delta: float) -> void:
 		
 		# Reaches the last known spot.
 		if global_position.distance_to(lastKnownPlayerPos) < 15:
+			print("LAST SPOT")
 			state = GoonState.IDLE
 			velocity = Vector2.ZERO
 			searchTimer = 0.0
 		
 		# If timer runs out give up.
 		elif searchTimer > MAX_SEARCH_TIME:
+			print("OUTTA TIME")
 			state = GoonState.IDLE
 			velocity = Vector2.ZERO
 			searchTimer = 0.0
@@ -277,7 +283,6 @@ func _on_goon_hitbox_area_entered(area: Area2D) -> void:
 		
 	# For the punch/fist.
 	if area.name == "ActualPunch":
-		print(area.name)
 		isKnockdown = true
 		
 		# Get the player.
@@ -345,7 +350,7 @@ func death():
 # This makes the goon go for the nearest weapon.
 func getNearestWeapon() -> Area2D:
 	# Check for any weapons
-	var weapons = get_tree().get_nodes_in_group("Weapons")
+	var weapons = get_tree().get_nodes_in_group("ItemDrops")
 	if weapons.is_empty():
 		state = GoonState.IDLE
 		return null
@@ -392,6 +397,14 @@ func dropWeapon():
 		# Remove the weapon from the mob
 		equippedWeapon.queue_free()
 		equippedWeapon = null
+		
+		# Make sure to pickup a weapon if alive.
+		if not isDead:
+			weaponTarget = getNearestWeapon()
+			if weaponTarget:
+				state = GoonState.GETTING_WEAPON
+			else:
+				state = GoonState.IDLE
 
 # For spawning the weapon when death or knocked.
 func spawnWeaponPickup(path: String, ammo: int):
@@ -420,12 +433,10 @@ func hasLineOfSight(target: Node2D) -> bool:
 	
 	# If nothing is blocking then return true.
 	if result.is_empty():
-		print("no block")
 		return true
 	# Check if the target returns the same as the collider.
 	else:
 		isTileWallPlayer = true
-		print(result.collider == target)
 		return result.collider == target
 	
 # Once done the knockdown boolean resets and other properties

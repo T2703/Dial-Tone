@@ -45,4 +45,3 @@ func _on_exit_body_entered(body: Node2D) -> void:
 		# Go to the next level.
 		var nextLevel = get_tree().current_scene
 		nextLevel.add_child(body)
-		body.global_position = nextLevel.get_node("PlayerSpawn").global_position

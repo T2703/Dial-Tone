@@ -23,6 +23,10 @@ GameUtils="*res://scripts/utils/game_utils.gd"
 
 project/assembly_name="DialTone"
 
+[global_group]
+
+Player=""
+
 [input]
 
 left={

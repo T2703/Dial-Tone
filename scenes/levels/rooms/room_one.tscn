@@ -1,11 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://bkt0vfbaqovql"]
+[gd_scene load_steps=10 format=3 uid="uid://bkt0vfbaqovql"]
 
 [ext_resource type="Script" path="res://scripts/levels/rooms/room_one.gd" id="1_cwrcc"]
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_hyqu7"]
 [ext_resource type="PackedScene" uid="uid://dt8uqp3wwq5q" path="res://scenes/mobs/goon.tscn" id="3_1lkij"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/assault.tscn" id="4_n7hqn"]
-[ext_resource type="PackedScene" uid="uid://dimjb4b6qhvgr" path="res://scenes/weapons/smg.tscn" id="5_tk5ve"]
-[ext_resource type="PackedScene" uid="uid://bnkagqk0eefy3" path="res://scenes/player/player.tscn" id="5_wxf1c"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o41eg"]
 texture = ExtResource("1_hyqu7")
@@ -204,14 +202,6 @@ position = Vector2(79, 88)
 position = Vector2(433, 205)
 
 [node name="Goon" parent="." instance=ExtResource("3_1lkij")]
-position = Vector2(413, 71)
+position = Vector2(239, 171)
 weaponScene = ExtResource("4_n7hqn")
 startingAmmo = 30
-
-[node name="Goon2" parent="." instance=ExtResource("3_1lkij")]
-position = Vector2(73, 121)
-weaponScene = ExtResource("5_tk5ve")
-startingAmmo = 20
-
-[node name="Player" parent="." groups=["Player"] instance=ExtResource("5_wxf1c")]
-position = Vector2(387, 326)

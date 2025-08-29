@@ -28,7 +28,7 @@ func pickupByMob(mob) -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_to_group("Weapons")
+	add_to_group("ItemDrops")
 	if weaponType != "":
 		pistol = load(weaponType)
 
