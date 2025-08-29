@@ -139,10 +139,8 @@ func _physics_process(delta: float) -> void:
 	# If goon has no weapon and no current weapon target, find one.
 	if equippedWeapon == null:
 		if weaponTarget == null or not is_instance_valid(weaponTarget):
-			print("GET NEAR WEAPON")
 			weaponTarget = getNearestWeapon()
 		if weaponTarget:
-			print("GET WEAPON")
 			state = GoonState.GETTING_WEAPON
 	
 	# Apply the friction if knocked down so the body stops.
@@ -158,7 +156,6 @@ func _physics_process(delta: float) -> void:
 	
 	# Getting weapon.
 	elif state == GoonState.GETTING_WEAPON and weaponTarget and is_instance_valid(weaponTarget):
-		print("get weapon getting")
 		var dir = (weaponTarget.global_position - global_position).normalized()
 		velocity = dir * speed
 		if global_position.distance_to(weaponTarget.global_position) < 12:
@@ -169,7 +166,6 @@ func _physics_process(delta: float) -> void:
 	elif state == GoonState.CHASING_PLAYER and playerRef and is_instance_valid(playerRef) and equippedWeapon:
 		var distToPlayer = global_position.distance_to(playerRef.global_position)
 		var dir = (playerRef.global_position - global_position).normalized()
-		print("CHASE")
 		
 		# Check if line of sight exists
 		if isLineOfSight:
@@ -213,6 +209,7 @@ func _physics_process(delta: float) -> void:
 			
 				# The melee weapon logic.	
 				elif w and w.typeOfWeapon == "melee":
+					print("CHASE")
 					var swingDist = 30
 					
 					# Rotate to the player
@@ -226,6 +223,7 @@ func _physics_process(delta: float) -> void:
 						velocity = Vector2.ZERO
 						equippedWeapon.swingGoon()
 					else:
+						velocity = dir * speed
 						if equippedWeapon.has_node("HitDetectionPlayer"):
 							equippedWeapon.hitDetectionPlayer.monitoring = false
 				# No weapon, just chase
@@ -235,36 +233,30 @@ func _physics_process(delta: float) -> void:
 			lostSightTimer += delta
 			if lostSightTimer > 0.5:
 				# No line of sight, go to last known position
-				#print("SEARCH 1")
 				state = GoonState.SEARCHING
 				playerRef = null
 		
 	elif state == GoonState.SEARCHING:
 		searchTimer += delta
 		
-		
 		# Move towards the last known position.
 		var dir = (lastKnownPlayerPos - global_position).normalized()
 		velocity = dir * speed
-		#print("real", realPlayer)
 		
 		if realPlayer and is_instance_valid(realPlayer):
 			if hasLineOfSight(realPlayer):
 				playerRef = realPlayer
 				state = GoonState.CHASING_PLAYER
 				searchTimer = 0.0
-				print("Player rediscovered during search!")
 		
 		# Reaches the last known spot.
 		if global_position.distance_to(lastKnownPlayerPos) < 15:
-			print("LAST SPOT")
 			state = GoonState.IDLE
 			velocity = Vector2.ZERO
 			searchTimer = 0.0
 		
 		# If timer runs out give up.
 		elif searchTimer > MAX_SEARCH_TIME:
-			print("OUTTA TIME")
 			state = GoonState.IDLE
 			velocity = Vector2.ZERO
 			searchTimer = 0.0
