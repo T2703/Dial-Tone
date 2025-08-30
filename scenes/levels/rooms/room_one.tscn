@@ -1,10 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://bkt0vfbaqovql"]
+[gd_scene load_steps=12 format=3 uid="uid://bkt0vfbaqovql"]
 
 [ext_resource type="Script" path="res://scripts/levels/rooms/room_one.gd" id="1_cwrcc"]
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_hyqu7"]
 [ext_resource type="PackedScene" uid="uid://dt8uqp3wwq5q" path="res://scenes/mobs/goon.tscn" id="3_1lkij"]
 [ext_resource type="PackedScene" uid="uid://dll0rdp8u0dx3" path="res://scenes/weapons/bat.tscn" id="4_5qtyd"]
 [ext_resource type="PackedScene" uid="uid://bnkagqk0eefy3" path="res://scenes/player/player.tscn" id="5_u7ctn"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_js1yn"]
+vertices = PackedVector2Array(451.648, 60, 453.977, 72.8203, 317.172, 70.8594, 186.563, 60, 192.563, 171.148, 315.828, 150.859, 52.6719, 172, 47.3438, 13, 103.938, 13, 102.938, 169.859, 460, 152.859, 460, 207.141, 409.57, 207.883, 399.602, 172)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 3, 2, 5), PackedInt32Array(6, 7, 8, 9), PackedInt32Array(10, 11, 12, 13), PackedInt32Array(5, 10, 13, 4), PackedInt32Array(4, 13, 6), PackedInt32Array(6, 9, 4)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(37, 3, 43, 182, 392, 182, 402, 218, 470, 217, 470, 143, 326, 141, 327, 81, 466, 83, 460, 50, 176, 50, 182, 161, 113, 160, 114, 3)])
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o41eg"]
 texture = ExtResource("1_hyqu7")
@@ -162,6 +167,9 @@ size = Vector2(96, 28)
 
 [node name="RoomOne" type="Node2D"]
 script = ExtResource("1_cwrcc")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_js1yn")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_0ppvl")

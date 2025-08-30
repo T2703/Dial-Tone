@@ -103,6 +103,9 @@ animation = &"walk"
 
 [node name="LineOfSight" type="RayCast2D" parent="."]
 
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+debug_enabled = true
+
 [connection signal="area_entered" from="GoonHitbox" to="." method="_on_goon_hitbox_area_entered"]
 [connection signal="body_entered" from="GoonKnockdown" to="." method="_on_goon_knockdown_body_entered"]
 [connection signal="body_exited" from="GoonKnockdown" to="." method="_on_goon_knockdown_body_exited"]

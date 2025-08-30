@@ -93,6 +93,8 @@ var lostSightTimer = 0.0
 # Knockdown area
 @onready var knockdownArea: Area2D = $GoonKnockdown
 
+@onready var navAgent: NavigationAgent2D = $NavigationAgent2D
+
 # The weapon.
 @export var weaponScene: PackedScene
 
@@ -156,8 +158,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Getting weapon.
 	elif state == GoonState.GETTING_WEAPON and weaponTarget and is_instance_valid(weaponTarget):
-		var dir = (weaponTarget.global_position - global_position).normalized()
-		velocity = dir * speed
+		chaseTarget(weaponTarget.global_position, delta)
 		if global_position.distance_to(weaponTarget.global_position) < 12:
 			weaponTarget.pickupByMob(self)
 			state = GoonState.CHASING_PLAYER
@@ -209,7 +210,6 @@ func _physics_process(delta: float) -> void:
 			
 				# The melee weapon logic.	
 				elif w and w.typeOfWeapon == "melee":
-					print("CHASE")
 					var swingDist = 30
 					
 					# Rotate to the player
@@ -223,7 +223,7 @@ func _physics_process(delta: float) -> void:
 						velocity = Vector2.ZERO
 						equippedWeapon.swingGoon()
 					else:
-						velocity = dir * speed
+						chaseTarget(playerRef.global_position, delta)
 						if equippedWeapon.has_node("HitDetectionPlayer"):
 							equippedWeapon.hitDetectionPlayer.monitoring = false
 				# No weapon, just chase
@@ -240,8 +240,7 @@ func _physics_process(delta: float) -> void:
 		searchTimer += delta
 		
 		# Move towards the last known position.
-		var dir = (lastKnownPlayerPos - global_position).normalized()
-		velocity = dir * speed
+		chaseTarget(lastKnownPlayerPos, delta)
 		
 		if realPlayer and is_instance_valid(realPlayer):
 			if hasLineOfSight(realPlayer):
@@ -317,6 +316,19 @@ func _on_goon_hitbox_area_entered(area: Area2D) -> void:
 	# Melee hit they die in one blow.
 	elif area.name == "HitDetection": 
 		death()
+
+# Chase the specified target
+func chaseTarget(targetPos: Vector2, delta: float):
+	# Tell where the goon should navigate
+	navAgent.target_position = targetPos
+	
+	# If the goon has a path, do some path finding.
+	if navAgent.is_navigation_finished() == false:
+		var nextPoint = navAgent.get_next_path_position()
+		var dir = (nextPoint - global_position).normalized()
+		velocity = dir * speed
+	else:
+		velocity = Vector2.ZERO
 
 # The death of goon.
 func death():
