@@ -1,6 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://c6i2140usoor8"]
+[gd_scene load_steps=8 format=3 uid="uid://c6i2140usoor8"]
 
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_k47ep"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_75pkb"]
+vertices = PackedVector2Array(376.961, 75.5391, 394.898, 243.242, 265.25, 246.219, 240.602, 68.4688, 197.859, 68, 198.859, -2.28906, 243.563, -3.65625, 207.117, 248.07, 73.8516, 247.07, 71.1484, 68, 214.117, 323.133, 263.25, 323.852)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 3, 7), PackedInt32Array(8, 9, 4, 7), PackedInt32Array(10, 7, 3, 2, 11)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(189, -12, 188, 58, 61, 58, 64, 257, 198, 258, 205, 333, 273, 334, 275, 256, 406, 253, 386, 66, 251, 59, 254, -14)])
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w81vk"]
 texture = ExtResource("1_k47ep")
@@ -157,6 +162,9 @@ size = Vector2(96.5, 26.625)
 size = Vector2(95, 24)
 
 [node name="RoomThree" type="Node2D"]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_75pkb")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_admwj")

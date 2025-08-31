@@ -1,19 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://offov2678wxd"]
+[gd_scene load_steps=2 format=3 uid="uid://offov2678wxd"]
 
 [ext_resource type="PackedScene" uid="uid://bnug8yvkyenhi" path="res://scenes/levels/level.tscn" id="1_w4mhe"]
-[ext_resource type="PackedScene" uid="uid://dcmao1uhmiwsi" path="res://scenes/weapons/smg_pickup.tscn" id="3_xhq80"]
 
 [node name="MainLevel" type="Node2D"]
 
-[node name="Environment" type="Node2D" parent="."]
-
-[node name="Level" parent="Environment" instance=ExtResource("1_w4mhe")]
-
-[node name="Mobs" type="Node2D" parent="."]
-visible = false
-
-[node name="Weapons" type="Node2D" parent="."]
-visible = false
-
-[node name="SMGPickup" parent="Weapons" instance=ExtResource("3_xhq80")]
-position = Vector2(338, 779)
+[node name="Level" parent="." instance=ExtResource("1_w4mhe")]

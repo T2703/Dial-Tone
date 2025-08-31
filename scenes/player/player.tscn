@@ -147,6 +147,7 @@ _data = {
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 2
 script = ExtResource("1_ndnar")
+metadata/_edit_group_ = true
 
 [node name="PlayerUI" parent="." instance=ExtResource("2_awhv8")]
 

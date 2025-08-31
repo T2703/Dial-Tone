@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://df1h8g74x7mxf" path="res://assets/mobs/goon/death/death3.png" id="4_2om7y"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pw261"]
-size = Vector2(16, 28)
+size = Vector2(12, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mwr26"]
 size = Vector2(18, 30)
@@ -19,7 +19,7 @@ size = Vector2(18, 30)
 size = Vector2(20, 30)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hkda3"]
-radius = 159.003
+radius = 197.041
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kwbhj"]
 animations = [{
@@ -104,6 +104,8 @@ animation = &"walk"
 [node name="LineOfSight" type="RayCast2D" parent="."]
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 1.0
+target_desired_distance = 1.0
 debug_enabled = true
 
 [connection signal="area_entered" from="GoonHitbox" to="." method="_on_goon_hitbox_area_entered"]
