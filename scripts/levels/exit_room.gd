@@ -16,6 +16,9 @@ func _on_exit_body_entered(body: Node2D) -> void:
 		var loadingScreen = loadingScreenScene.instantiate()
 		get_tree().root.add_child(loadingScreen)
 		
+		# Store the loading screen.
+		var loadingUI = loadingScreen
+		
 		# Render.
 		await get_tree().process_frame
 		
@@ -24,13 +27,18 @@ func _on_exit_body_entered(body: Node2D) -> void:
 		
 		# Poll until finished.
 		while true:
-			var progress = []
+			var progress: Array = []
 			var status = ResourceLoader.load_threaded_get_status("res://scenes/levels/main_level.tscn", progress)
-			print("LOADING")
 			
+			# Update bar if progress available
+			if progress.size() > 0:
+				print("load")
+				loadingUI.setProgress(progress[0]) 
+		
 			# End loop once loaded.
 			if status == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_LOADED:
 				break
+				
 			await get_tree().process_frame
 
 		# Load new level

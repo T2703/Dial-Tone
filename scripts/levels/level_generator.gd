@@ -17,14 +17,14 @@ var lastRoom = null
 func _ready() -> void:
 	randomize()
 	generateLevel(10)
-	
+
+# Generates the level.
 func generateLevel(roomCount: int):
 	# Add rooms based on the room count
 	for i in range(roomCount):
 		# Initializing the rooms.
 		var roomScene = roomScenes[randi() % roomScenes.size()]
 		var room = roomScene.instantiate()
-		
 		
 		# First room, origin/spawn room.
 		if lastRoom == null:
@@ -65,8 +65,13 @@ func generateLevel(roomCount: int):
 				
 				# Checking bounds
 				if not isOverlapping(exitRoom):
+					# Add the exit room.
 					add_child(exitRoom)
 					generatedRooms.append(exitRoom)
+					
+					# Connect the doors.
+					connectDoors(exitDoor, entryDoor)
+					
 					lastRoom = exitRoom
 					placed = true
 				else:
@@ -93,8 +98,13 @@ func generateLevel(roomCount: int):
 				
 				# Check overlap
 				if not isOverlapping(room):
+					# Add the room
 					add_child(room)
 					generatedRooms.append(room)
+					
+					# Connect the doors.
+					connectDoors(exitDoor, entryDoor)
+					
 					lastRoom = room
 					placed = true
 				else:
@@ -139,3 +149,11 @@ func isOverlapping(newRoom: Node2D) -> bool:
 			return true
 
 	return false
+
+# Connect navigation between the doors.
+func connectDoors(doorA: Node2D, doorB: Node2D) -> void:
+	var link = NavigationLink2D.new()
+	link.bidirectional = true
+	link.start_position = doorA.global_position
+	link.end_position = doorB.global_position
+	add_child(link)

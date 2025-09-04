@@ -1,10 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://oetird42j0mc"]
+[gd_scene load_steps=11 format=3 uid="uid://oetird42j0mc"]
 
 [ext_resource type="Script" path="res://scripts/levels/rooms/room_two.gd" id="1_a0q3w"]
 [ext_resource type="Texture2D" uid="uid://bgv1cbbctyadg" path="res://assets/rooms/tileset.png" id="1_u08wl"]
 [ext_resource type="PackedScene" uid="uid://dt8uqp3wwq5q" path="res://scenes/mobs/goon.tscn" id="3_y13ya"]
 [ext_resource type="PackedScene" uid="uid://dll0rdp8u0dx3" path="res://scenes/weapons/bat.tscn" id="4_1fnlc"]
-[ext_resource type="PackedScene" uid="uid://bnkagqk0eefy3" path="res://scenes/player/player.tscn" id="5_etssd"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_vog3g"]
 vertices = PackedVector2Array(118, 208, 117.992, 211.75, 41.9922, 211.898, 42, 208, 118, 182, 186, 42, 186, 12.3984, 262, 12.5625, 262, 42, 326, 42, 326, 170, 378, 170, 378, 42, 422, 42, 422, 182, 138, 138, 42, 138, 138, 54, 42, 42, 102, 54, 42, 86, 102, 86)
@@ -213,6 +212,3 @@ position = Vector2(77, 73)
 position = Vector2(405, 71)
 weaponScene = ExtResource("4_1fnlc")
 startingAmmo = 30
-
-[node name="Player" parent="." instance=ExtResource("5_etssd")]
-position = Vector2(71, 250)

@@ -1,7 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://offov2678wxd"]
+[gd_scene load_steps=3 format=3 uid="uid://offov2678wxd"]
 
 [ext_resource type="PackedScene" uid="uid://bnug8yvkyenhi" path="res://scenes/levels/level.tscn" id="1_w4mhe"]
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_ct3x5"]
+
 [node name="MainLevel" type="Node2D"]
 
-[node name="Level" parent="." instance=ExtResource("1_w4mhe")]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_ct3x5")
+
+[node name="Level" parent="NavigationRegion2D" instance=ExtResource("1_w4mhe")]
